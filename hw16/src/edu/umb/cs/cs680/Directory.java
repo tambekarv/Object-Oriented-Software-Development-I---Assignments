@@ -1,0 +1,43 @@
+package edu.umb.cs.cs680;
+import java.util.ArrayList;
+
+public class Directory extends FSElement
+{
+	
+	private ArrayList<FSElement> children;	
+	
+	public Directory(Directory parent, String name, String owner) 
+	{
+		super(parent, name, owner, 0, false);
+		children = new ArrayList<FSElement>();
+	}
+
+	public ArrayList<FSElement> getChildren()
+	{
+		return this.children;
+	}
+	public void appendChild(FSElement child)
+	{
+		children.add(child);
+	}
+
+	public void accept(FSVisitor v)
+	{
+		v.visit(this);
+		for (FSElement e : children)
+		{
+			e.accept(v);
+		}
+	}
+
+	public void addChild(FSElement child, int index)
+	{
+		children.add(index, child);
+	}
+	
+	public int getDiskUtil() 
+	{	
+		return 0;
+	}
+
+}

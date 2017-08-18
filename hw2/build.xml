@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<project name="Poly" basedir="."
+
+default="XXX">
+
+<target name="XXX">
+
+<mkdir dir="bin" />
+
+<javac srcdir="src" destdir="bin" />
+
+<java fork="true" failonerror="yes" dir="bin" className="Testpoly" />
+
+</target>
+ </project>

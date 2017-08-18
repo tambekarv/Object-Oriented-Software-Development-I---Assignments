@@ -1,0 +1,73 @@
+<project xmlns:jacoco="antlib:org.jacoco.ant" name="hw6" basedir="." default="findbugs">
+    <property environment="env" />
+    <property name="junitpath" value="${env.JUNIT_CS680}" />
+    <property name="hamcrestpath" value="${env.HAMCREST_CORE_CS680}" />
+    <property name="jacocopath" value="${env.JACOCO_CS680}" />
+    <property name="findbugspath" value="${env.FINDBUGS_CS680}" />
+    
+    <taskdef name="findbugs"
+        classpath="${findbugspath}\lib\findbugs.jar"
+        classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+    </taskdef>
+    
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="${jacocopath}" />
+    </taskdef>
+    
+    <target name="compile">
+        <mkdir dir="bin" />
+        <mkdir dir="test/bin" />
+        <javac srcdir="src" destdir="bin" />
+        <javac srcdir="test/src" destdir="test/bin">
+            <classpath>
+                <pathelement location="${hamcrestpath}" />
+                <pathelement location="${junitpath}" />
+                <pathelement location="bin" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="junit" depends="compile">
+        <jacoco:coverage destfile="test/coverage.exec">
+            <junit fork="true" printsummary="true" haltonfailure="no">
+                <classpath>
+                    <pathelement location="${hamcrestpath}" />
+                    <pathelement location="${junitpath}" />
+                    <pathelement location="test/bin" />
+                    <pathelement location="bin" />
+                </classpath>
+                <formatter type="plain" usefile="false" />
+                
+                <batchtest fork="yes">
+                    <fileset dir="test/src" includes="**/*Test.java" />
+                </batchtest>
+            </junit>
+        </jacoco:coverage>
+    </target>
+    <target name="coverage-report" depends="junit">
+        <jacoco:report>
+            <executiondata>
+                <file file="test/coverage.exec"/>
+            </executiondata>
+            <structure name="Homework-6">
+                <classfiles>
+                    <fileset dir="bin"/>
+                </classfiles>
+                <sourcefiles>
+                    <fileset dir="src"/>
+                </sourcefiles>
+            </structure>
+            <html destdir="test"/>
+        </jacoco:report>
+        <delete file="test/coverage.exec" />
+    </target>
+    <target name="findbugs" depends="coverage-report">
+        <findbugs output="xml"
+            outputFile="test/findbugs-report.xml"
+            home="${findbugspath}">   
+            <sourcePath path="src" />
+            <class location="bin" />
+        </findbugs>
+    </target>
+    
+</project>
